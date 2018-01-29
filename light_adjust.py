@@ -9,8 +9,13 @@ if __name__ == '__main__':
         print('Expected 2 arguments. Exiting.')
         sys.exit(1)
     # parse from storage file
-    with open('persistent_storage.json', 'r') as storage:
-        SETTINGS = json.load(storage) # dictionary, {redshift:value, brightness:value}
+    try: 
+        with open('persistent_storage.json', 'r') as storage:
+            SETTINGS = json.load(storage) # dictionary, {redshift:value, brightness:value}
+    except FileNotFoundError:
+        with open('persistent_storage.json','w') as storage:
+            SETTINGS = {}
+            json.dump(SETTINGS, storage)
     if SETTINGS == {}:
         SETTINGS = {
             'brightness': 1,
