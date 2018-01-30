@@ -1,14 +1,66 @@
-import sys
-import json
-from subprocess import run
+"""
+Program designed to allow users to incrementally adjust light settings on screen.
 
-# sys.argv - variables (array)
+Uses redshift package supported by Jon Lund Steffensen at: http://jonls.dk/redshift/
+"""
+import sys # used to parse arguments to program
+import json # used to write persistent settings to file
+from subprocess import run # used to run redshift terminal command
+
+def adjust_light(settings, direction):
+    """
+    Main functional method.
+
+    Adjusts current settings read in by main method,
+    Makes adjustment call to system (redshift must be installed)
+    Writes changes to file.
+    """
+    # current settings values
+    brightness = settings['brightness']
+    redshift = settings['redshift']
+    # brightness range values
+    b_min = 0.1
+    b_max = 1
+    b_delta = 0.05
+    # redshift range values
+    r_min = 0
+    r_max = 10000
+    r_delta = 500
+    # adjust settings
+    if direction == 'up':
+        brightness = b_max if (brightness + b_delta >
+                               b_max) else brightness + b_delta
+    elif direction == 'down':
+        brightness = b_min if (brightness - b_delta <
+                               b_min) else brightness - b_delta
+    elif direction == 'right':
+        redshift = r_max if (redshift + r_delta >
+                             r_max) else redshift + r_delta
+    elif direction == 'left':
+        redshift = r_min if (redshift - r_delta <
+                             r_min) else redshift - r_delta
+    # return adjusted settings values
+    settings['brightness'] = brightness
+    settings['redshift'] = redshift
+    # default is no change to settings
+    flags = ['redshift', '-O',
+             str(settings['redshift']), '-b', str(settings['brightness'])]
+    # make system call
+    run(flags)
+    # write changes to storage
+    with open('persistent_storage.json', 'w') as storage:
+        json.dump(settings, storage)
+        storage.close()
+    # close
+    exit(0)
+    sys.exit(0)
 
 if __name__ == '__main__':
+    # handle calling errors
     if len(sys.argv) != 2:
         print('Expected 2 arguments. Exiting.')
         sys.exit(1)
-    # parse from storage file
+    # parse settings from storage file
     try:
         with open('persistent_storage.json', 'r') as storage:
             SETTINGS = json.load(storage) # dictionary, {redshift:value, brightness:value}
@@ -20,40 +72,7 @@ if __name__ == '__main__':
             }
             json.dump(SETTINGS, storage)
     # direction
-    ARG = sys.argv[1]
-    # current settings values
-    BRIGHTNESS = SETTINGS['brightness']
-    REDSHIFT = SETTINGS['redshift']
-    # brightness range
-    B_MIN = 0.1
-    B_MAX = 1
-    B_DELTA = 0.05
-    # mins
-    R_MIN = 0
-    R_MAX = 10000
-    R_DELTA = 500
-    # determine FLAGS (make adjustments)
-    if ARG == 'up':
-        BRIGHTNESS = B_MAX if (BRIGHTNESS + B_DELTA >
-                               B_MAX) else BRIGHTNESS + B_DELTA
-    elif ARG == 'down':
-        BRIGHTNESS = B_DELTA if (BRIGHTNESS - B_DELTA < B_DELTA) else BRIGHTNESS-B_DELTA
-    elif ARG == 'right':
-        REDSHIFT = R_MAX if (REDSHIFT + R_DELTA >
-                             R_MAX) else REDSHIFT + R_DELTA
-    elif ARG == 'left':
-        REDSHIFT = R_MIN if (REDSHIFT - R_DELTA <
-                             R_MIN) else REDSHIFT - R_DELTA
-    # return settings values
-    SETTINGS['brightness'] = BRIGHTNESS
-    SETTINGS['redshift'] = REDSHIFT
-    # default is no change to SETTINGS
-    FLAGS = ['redshift', '-O', str(SETTINGS['redshift']), '-b', str(SETTINGS['brightness'])]
-    # make system call
-    run(FLAGS)
-    # write changes to storage
-    with open('persistent_storage.json', 'w') as storage:
-        json.dump(SETTINGS, storage)
-        storage.close()
-    exit(0)
-    sys.exit(0)
+    DIRECTION = sys.argv[1]
+    # make function call
+    adjust_light(SETTINGS, DIRECTION)
+    
