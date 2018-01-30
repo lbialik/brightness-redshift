@@ -2,6 +2,9 @@
 Program designed to allow users to incrementally adjust light settings on screen.
 
 Uses redshift package supported by Jon Lund Steffensen at: http://jonls.dk/redshift/
+
+Appropriate terminal command would look like:
+"python3 /home/user/brightness-redshift/light_adjust.py up"
 """
 import sys # used to parse arguments to program
 import json # used to write persistent settings to file
