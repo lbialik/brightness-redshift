@@ -10,7 +10,7 @@ import sys # used to parse arguments to program
 import json # used to write persistent settings to file
 from subprocess import run # used to run redshift terminal command
 
-def adjust_light(settings, direction):
+def adjust_light(settings, direction, persistent):
     """
     Main functional method.
 
@@ -51,7 +51,7 @@ def adjust_light(settings, direction):
     # make system call
     run(flags)
     # write changes to storage
-    with open('persistent_storage.json', 'w') as storage:
+    with open(persistent, 'w') as storage:
         json.dump(settings, storage)
         storage.close()
     # close
@@ -59,16 +59,17 @@ def adjust_light(settings, direction):
     sys.exit(0)
 
 if __name__ == '__main__':
+    PERSISTENT = '.persistent_storage.json'
     # handle calling errors
     if len(sys.argv) != 2:
         print('Expected 2 arguments. Exiting.')
         sys.exit(1)
     # parse settings from storage file
     try:
-        with open('persistent_storage.json', 'r') as storage:
+        with open(PERSISTENT, 'r') as storage:
             SETTINGS = json.load(storage) # dictionary, {redshift:value, brightness:value}
     except FileNotFoundError:
-        with open('persistent_storage.json', 'w') as storage:
+        with open(PERSISTENT, 'w') as storage:
             SETTINGS = {
                 'brightness': 1,
                 'redshift': 6500
@@ -77,5 +78,5 @@ if __name__ == '__main__':
     # direction
     DIRECTION = sys.argv[1]
     # make function call
-    adjust_light(SETTINGS, DIRECTION)
+    adjust_light(SETTINGS, DIRECTION, PERSISTENT)
     
