@@ -26,9 +26,9 @@ def adjust_light(settings, direction, persistent):
     b_max = 1
     b_delta = 0.05
     # redshift range values
-    r_min = 0
+    r_min = 1000
     r_max = 10000
-    r_delta = 500
+    r_delta = 250
     # adjust settings
     if direction == 'up':
         brightness = b_max if (brightness + b_delta >
