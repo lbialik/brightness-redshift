@@ -4,7 +4,7 @@ Program designed to allow users to incrementally adjust light settings on screen
 Uses redshift package supported by Jon Lund Steffensen at: http://jonls.dk/redshift/
 
 Appropriate terminal command would look like:
-"python3 /home/user/brightness-redshift/light_adjust.py up"
+"python3 /home/<user>/brightness-redshift/light_adjust.py up"
 """
 import sys # used to parse arguments to program
 import json # used to write persistent settings to file
@@ -50,6 +50,12 @@ def adjust_light(settings, direction, persistent):
              str(settings['redshift']), '-b', str(settings['brightness'])]
     # make system call
     run(flags)
+    # notification of location in brightness-redshift - TOO MANY APPEAR
+    # notification = ['notify-send', 
+    #     'Light Adjustment', 
+    #     'Redshift: ' + str(redshift) + ', Brightness: ' + str(brightness)
+    # ]
+    # run(notification)
     # write changes to storage
     with open(persistent, 'w') as storage:
         json.dump(settings, storage)
@@ -72,7 +78,8 @@ if __name__ == '__main__':
         with open(PERSISTENT, 'w') as storage:
             SETTINGS = {
                 'brightness': 1,
-                'redshift': 6500
+                'redshift': 6500,
+                # 'time' :  time set for notifications so only one appears after 3 seconds
             }
             json.dump(SETTINGS, storage)
     # direction
