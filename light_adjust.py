@@ -28,7 +28,7 @@ def adjust_light(settings, direction):
     # redshift range values
     r_min = 0
     r_max = 10000
-    r_delta = 500
+    r_delta = 300
     # adjust settings
     if direction == 'up':
         brightness = b_max if (brightness + b_delta >
@@ -46,8 +46,10 @@ def adjust_light(settings, direction):
     settings['brightness'] = brightness
     settings['redshift'] = redshift
     # default is no change to settings
-    flags = ['redshift', '-O',
-             str(settings['redshift']), '-b', str(settings['brightness'])]
+    flags = ['redshift', 
+	    '-O', str(settings['redshift']), 
+	    '-b', str(settings['brightness']),
+	    '-r']
     # make system call
     run(flags)
     # write changes to storage
@@ -78,4 +80,3 @@ if __name__ == '__main__':
     DIRECTION = sys.argv[1]
     # make function call
     adjust_light(SETTINGS, DIRECTION)
-    
