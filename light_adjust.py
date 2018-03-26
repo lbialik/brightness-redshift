@@ -56,7 +56,7 @@ def adjust_light(settings, direction, persistent):
     # make system call
     run(flags)
     # notification of location in brightness-redshift
-    if brightness == B_DEFAULT and redshift == R_DEFAULT:
+    if redshift == R_DEFAULT:
         notification = ['notify-send',
                         'Light Adjustment Neutral',
                         'Redshift: ' + str(redshift) + ', Brightness: ' + str(brightness)]
